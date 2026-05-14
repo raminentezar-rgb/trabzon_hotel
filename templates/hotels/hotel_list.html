@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section container" style="margin-top: 100px;">
+    <div class="section-header">
+        <h2>Tüm Trabzon Otelleri</h2>
+        <p>Anlaşmalı olduğumuz tüm otellerin listesi, en iyi fiyat garantisiyle.</p>
+    </div>
+
+    <div class="hotel-grid">
+        {% for hotel in hotels %}
+        <div class="hotel-card">
+            <div class="hotel-img">
+                {% if hotel.main_image %}
+                    <img src="{{ hotel.main_image.url }}" alt="{{ hotel.name }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hotel">
+                {% endif %}
+                <div class="hotel-rating">{{ hotel.star_rating }} Yıldız</div>
+            </div>
+            <div class="hotel-body">
+                <h3>{{ hotel.name }}</h3>
+                <p class="hotel-location"><i class="fa-solid fa-location-dot"></i> {{ hotel.address }}</p>
+                <div class="hotel-amenities">
+                    {% for amenity in hotel.amenities.all|slice:":4" %}
+                        <i class="fa-solid {{ amenity.icon }}" title="{{ amenity.name }}"></i>
+                    {% endfor %}
+                </div>
+                <div class="hotel-footer">
+                    <div class="price">
+                        {% with first_room=hotel.room_types.first %}
+                            {% if first_room %}
+                                {{ first_room.price_per_night }} <span>TL / Gece</span>
+                            {% else %}
+                                İletişime Geçin
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <a href="{% url 'hotels:hotel_detail' hotel.pk %}" class="btn btn-primary">İncele</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Şu anda gösterilecek otel bulunmamaktadır.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+

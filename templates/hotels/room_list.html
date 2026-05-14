@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tüm Odalar | {{ hotel.name }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="room-hero" style="height: 40vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1600&q=80'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: #fff;">
+    <div class="container text-center">
+        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 10px;">Konaklama Seçenekleri</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9;">Size en uygun odayı bulun ve Karadeniz rüyasını yaşamaya başlayın.</p>
+    </div>
+</section>
+
+<section class="section" style="background: #f8fafd;">
+    <div class="container">
+        <!-- Room Filter Bar -->
+        <div style="text-align: center; margin-bottom: 50px;">
+            <div class="filter-wrapper" style="background: #fff; padding: 15px 30px; border-radius: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: inline-flex; align-items: center; gap: 10px; border: 1px solid #eee;">
+                <div id="filter-group" style="display: flex; gap: 8px; border-right: 1px solid #eee; padding-right: 20px;">
+                    <button class="filter-btn active" data-filter="all">Tümü</button>
+                    <button class="filter-btn" data-filter="2">2 Kişilik</button>
+                    <button class="filter-btn" data-filter="3">3 Kişilik</button>
+                    <button class="filter-btn" data-filter="4">4+ Kişilik</button>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 12px; padding-left: 10px;">
+                    <i class="fa-solid fa-sort-amount-down" style="color: #888;"></i>
+                    <select id="price-sort" style="padding: 8px 15px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-weight: 600; color: #444; outline: none; font-size: 0.95rem;">
+                        <option value="default">Önerilen Sıralama</option>
+                        <option value="low">En Düşük Fiyat</option>
+                        <option value="high">En Yüksek Fiyat</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="hotel-grid" id="room-container">
+            {% for room in rooms %}
+            <div class="hotel-card" data-capacity="{{ room.capacity }}" data-price="{{ room.price_per_night }}">
+                <div class="hotel-img">
+                    {% if room.image %}
+                        <img src="{{ room.image.url }}" alt="{{ room.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Room">
+                    {% endif %}
+                </div>
+                <div class="hotel-body">
+                    <h3 style="font-size: 1.3rem;"><a href="{% url 'hotels:room_detail' room.pk %}" style="color: inherit; text-decoration: none;">{{ room.name }}</a></h3>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">{{ room.description|truncatewords:15 }}</p>
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px; color: var(--primary);">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-bed" title="Kapasite"></i>
+                            <span>{{ room.capacity }} Kişi</span>
+                        </div>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <div class="hotel-footer">
+                        <div class="price">{{ room.price_per_night }} <span>TL / Gece</span></div>
+                        <a href="{% url 'hotels:room_detail' room.pk %}" class="btn btn-primary">Detayları Gör</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const roomContainer = document.getElementById('room-container');
+    const priceSort = document.getElementById('price-sort');
+
+    function filterRooms() {
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const filter = activeBtn.getAttribute('data-filter');
+        const rooms = document.querySelectorAll('.hotel-card');
+
+        rooms.forEach(room => {
+            const capacity = room.getAttribute('data-capacity');
+            let show = false;
+
+            if (filter === 'all') show = true;
+            else if (filter === '4') show = parseInt(capacity) >= 4;
+            else show = capacity === filter;
+
+            room.style.display = show ? 'block' : 'none';
+        });
+    }
+
+    function sortRooms() {
+        const sortValue = priceSort.value;
+        if (sortValue === 'default') return;
+
+        const rooms = Array.from(document.querySelectorAll('.hotel-card'));
+        rooms.sort((a, b) => {
+            const priceA = parseFloat(a.getAttribute('data-price'));
+            const priceB = parseFloat(b.getAttribute('data-price'));
+            return sortValue === 'low' ? priceA - priceB : priceB - priceA;
+        });
+
+        rooms.forEach(room => roomContainer.appendChild(room));
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            filterRooms();
+        });
+    });
+
+    if (priceSort) priceSort.addEventListener('change', sortRooms);
+});
+</script>
+{% endblock %}

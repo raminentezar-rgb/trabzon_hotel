@@ -1,0 +1,389 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="background-image: url('{{ hero_image }}'); background-size: cover; background-position: center;">
+    <video autoplay muted loop playsinline id="hero-video" 
+           src="{% static 'videos/hero-bg.mp4' %}"
+           style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); z-index: 0; object-fit: cover;">
+    </video>
+    <div class="hero-content">
+        <h1>{% if hotel %}{{ hotel.name }}{% else %}Trabzon'un En Özel Köşesi{% endif %}</h1>
+        <p>Konfor, lüks ve Karadeniz'in eşsiz doğasıyla harmanlanmış unutulmaz bir konaklama deneyimi.</p>
+        
+        <form class="search-box" onsubmit="event.preventDefault(); openBookingModal();">
+            <div class="search-group">
+                <label>Giriş Tarihi</label>
+                <input type="date" id="form_check_in" required>
+            </div>
+            <div class="search-group">
+                <label>Çıkış Tarihi</label>
+                <input type="date" id="form_check_out" required>
+            </div>
+            <div class="search-group">
+                <label>Misafirler</label>
+                <select id="form_guests">
+                    <option value="1">1 Yetişkin</option>
+                    <option value="2" selected>2 Yetişkin</option>
+                    <option value="4">Aile (2+2)</option>
+                </select>
+            </div>
+            <div class="search-actions" style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn btn-primary">Hemen Rezerve Et</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:#fff; padding:40px; border-radius:20px; width:100%; max-width:500px; position:relative;">
+        <span onclick="closeBookingModal()" style="position:absolute; top:20px; right:20px; cursor:pointer; font-size:1.5rem;">&times;</span>
+        <h2 style="margin-bottom:20px; color:var(--secondary);">Rezervasyon Detayları</h2>
+        <form action="{% url 'hotels:book_room' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="check_in" id="modal_check_in">
+            <input type="hidden" name="check_out" id="modal_check_out">
+            <input type="hidden" name="guests" id="modal_guests">
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px;">Ad Soyad</label>
+                <input type="text" name="full_name" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;" required>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px;">E-posta</label>
+                <input type="email" name="email" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;" required>
+            </div>
+            <div style="margin-bottom:25px;">
+                <label style="display:block; margin-bottom:5px;">Telefon</label>
+                <input type="tel" name="phone" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Talebi Gönder</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openBookingModal() {
+        document.getElementById('modal_check_in').value = document.getElementById('form_check_in').value;
+        document.getElementById('modal_check_out').value = document.getElementById('form_check_out').value;
+        document.getElementById('modal_guests').value = document.getElementById('form_guests').value;
+        document.getElementById('bookingModal').style.display = 'flex';
+    }
+    function closeBookingModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+    }
+</script>
+
+
+<!-- About Section -->
+<section class="section container" id="about">
+    <div class="about-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <div class="about-img">
+            <video autoplay muted loop playsinline src="{% static 'videos/amenity_38.mp4' %}" style="width: 100%; border-radius: 30px; box-shadow: var(--shadow); object-fit: cover; height: 400px;"></video>
+        </div>
+        <div class="about-text">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Otelimize Hoş Geldiniz</h2>
+            <p style="color: var(--text-light); margin-bottom: 25px; font-size: 1.1rem;">
+                {% if hotel %}{{ hotel.description }}{% else %}Trabzon'un kalbinde, modern mimariyle geleneksel misafirperverliği birleştiren otelimiz, misafirlerine sadece bir konaklama değil, bir yaşam tarzı sunuyor.{% endif %}
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 15px;">
+                    <h3 style="color: var(--primary); font-size: 2rem;">24/7</h3>
+                    <p style="font-size: 0.9rem;">Kesintisiz Hizmet</p>
+                </div>
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 15px;">
+                    <h3 style="color: var(--primary); font-size: 2rem;">150+</h3>
+                    <p style="font-size: 0.9rem;">Lüks Oda</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Rooms Section -->
+<section class="section" id="rooms" style="background: #f4f7f9;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Konaklama Seçeneklerimiz</h2>
+            <p>Sizler için titizlikle tasarlanmış, her ihtiyaca uygun lüks odalarımızı keşfedin.</p>
+        </div>
+
+        <!-- Room Filter Bar -->
+        <div style="text-align: center; margin-bottom: 50px;">
+            <div class="filter-wrapper" style="background: #fff; padding: 15px 30px; border-radius: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: inline-flex; align-items: center; gap: 10px; border: 1px solid #eee;">
+                <div id="filter-group" style="display: flex; gap: 8px; border-right: 1px solid #eee; padding-right: 20px;">
+                    <button class="filter-btn active" data-filter="all">Tümü</button>
+                    <button class="filter-btn" data-filter="2">2 Kişilik</button>
+                    <button class="filter-btn" data-filter="3">3 Kişilik</button>
+                    <button class="filter-btn" data-filter="4">4+ Kişilik</button>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 12px; padding-left: 10px;">
+                    <i class="fa-solid fa-sort-amount-down" style="color: #888;"></i>
+                    <select id="price-sort" style="padding: 8px 15px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-weight: 600; color: #444; outline: none; font-size: 0.95rem;">
+                        <option value="default">Önerilen Sıralama</option>
+                        <option value="low">En Düşük Fiyat</option>
+                        <option value="high">En Yüksek Fiyat</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="hotel-grid" id="room-container">
+            {% for room in rooms %}
+            <div class="hotel-card" data-capacity="{{ room.capacity }}" data-price="{{ room.price_per_night }}">
+                <div class="hotel-img">
+                    {% if room.image %}
+                        <img src="{{ room.image.url }}" alt="{{ room.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Room">
+                    {% endif %}
+                </div>
+                <div class="hotel-body">
+                    <h3 style="font-size: 1.3rem;"><a href="{% url 'hotels:room_detail' room.pk %}" style="color: inherit; text-decoration: none;">{{ room.name }}</a></h3>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">{{ room.description|truncatewords:15 }}</p>
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px; color: var(--primary);">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-bed" title="Kapasite"></i>
+                            <span>{{ room.capacity }} Kişi</span>
+                        </div>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <div class="hotel-footer">
+                        <div class="price">{{ room.price_per_night }} <span>TL / Gece</span></div>
+                        <a href="{% url 'hotels:room_detail' room.pk %}" class="btn btn-primary">Detayları Gör</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- View All Rooms Button -->
+        <div style="text-align: center; margin-top: 60px;">
+            <a href="{% url 'hotels:room_list' %}" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem; border-radius: 50px; background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none;">
+                <i class="fa-solid fa-list-ul" style="margin-right: 10px;"></i> Tüm Odalarımızı İnceleyin
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const roomContainer = document.getElementById('room-container');
+    const priceSort = document.getElementById('price-sort');
+
+    function filterRooms() {
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const filter = activeBtn.getAttribute('data-filter');
+        const rooms = document.querySelectorAll('.hotel-card');
+
+        rooms.forEach(room => {
+            const capacity = room.getAttribute('data-capacity');
+            let show = false;
+
+            if (filter === 'all') show = true;
+            else if (filter === '4') show = parseInt(capacity) >= 4;
+            else show = capacity === filter;
+
+            room.style.display = show ? 'block' : 'none';
+        });
+    }
+
+    function sortRooms() {
+        const sortValue = priceSort.value;
+        if (sortValue === 'default') return;
+
+        const rooms = Array.from(document.querySelectorAll('.hotel-card'));
+        rooms.sort((a, b) => {
+            const priceA = parseFloat(a.getAttribute('data-price'));
+            const priceB = parseFloat(b.getAttribute('data-price'));
+            return sortValue === 'low' ? priceA - priceB : priceB - priceA;
+        });
+
+        rooms.forEach(room => roomContainer.appendChild(room));
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            filterRooms();
+        });
+    });
+
+    if (priceSort) priceSort.addEventListener('change', sortRooms);
+});
+</script>
+
+<!-- Amenities Section -->
+<section class="section container" id="amenities">
+    <div class="section-header">
+        <h2>Ayrıcalıklı Hizmetler</h2>
+        <p>Konaklamanızı daha keyifli hale getirecek zengin imkanlarımızla hizmetinizdeyiz.</p>
+    </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+            {% for amenity in hotel.amenities.all %}
+                <div style="text-align: center; padding: 40px; border-radius: 20px; box-shadow: var(--shadow); transition: var(--transition); position: relative; overflow: hidden; min-height: 280px; display: flex; flex-direction: column; justify-content: center; color: #fff;">
+                    
+                    <!-- Background Video (Local Files) -->
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; border-radius: 20px; background: #001529;">
+                        <video autoplay muted loop playsinline 
+                               poster="{% if 'Wi-Fi' in amenity.name %}https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80{% elif 'Havuz' in amenity.name %}https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=600&q=80{% else %}https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=600&q=80{% endif %}"
+                               style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="{% static 'videos/amenity_' %}{{ amenity.id }}.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    
+                    <!-- Overlay -->
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 48, 96, 0.2); z-index: 1;"></div>
+
+                    <!-- Content -->
+                    <div style="position: relative; z-index: 2;">
+                        <i class="fa-solid {{ amenity.icon }}" style="font-size: 3rem; color: #fff; margin-bottom: 20px; display: block;"></i>
+                        <h3 style="margin-bottom: 10px; color: #fff;">{{ amenity.name }}</h3>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"></p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="section" id="gallery" style="background: #1a1a1a; color: #fff;">
+    <div class="container">
+        <div class="section-header">
+            <h2 style="color: #fff;">Fotoğraf Galerisi</h2>
+            <p style="color: #ccc;">Otelimizin eşsiz atmosferinden kareler.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+            {% for g_img in gallery %}
+                <div style="height: 250px; overflow: hidden; border-radius: 15px; cursor: pointer;">
+                    <img src="{{ g_img.image.url }}" onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+            {% empty %}
+                <div style="height: 250px; background: #333; border-radius: 15px;"></div>
+                <div style="height: 250px; background: #333; border-radius: 15px;"></div>
+                <div style="height: 250px; background: #333; border-radius: 15px;"></div>
+            {% endfor %}
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="{% url 'hotels:gallery_list' %}" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem; border-radius: 50px; box-shadow: 0 10px 20px rgba(0, 119, 182, 0.2);">
+                <i class="fa-solid fa-images" style="margin-right: 10px;"></i> Tüm Galeriyi Gör
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center;">
+    <span onclick="closeLightbox()" style="position:absolute; top:40px; right:40px; color:#fff; font-size:3rem; cursor:pointer;">&times;</span>
+    <img id="lightbox-img" src="" style="max-width:90%; max-height:80%; border-radius:10px; box-shadow:0 0 50px rgba(255,255,255,0.1);">
+</div>
+
+<script>
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').style.display = 'flex';
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+    }
+</script>
+
+
+<!-- Testimonials Section -->
+<section class="section" id="testimonials" style="background: #f4f7f9;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Misafir Deneyimleri</h2>
+            <p>Trabzon Royal Palace & Spa'da konaklayan misafirlerimizin gerçek yorumları.</p>
+        </div>
+        
+        <div style="overflow: hidden; padding-bottom: 30px;">
+            <div class="testimonial-track">
+                {% for review in reviews %}
+                <div style="min-width: 350px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: var(--shadow);">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: #eee;">
+                            {% if review.user_image %}
+                                <img src="{{ review.user_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <i class="fa-solid fa-user" style="font-size: 2rem; color: #ccc; margin: 15px;"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 style="margin: 0;">{{ review.user_name }}</h4>
+                            <div style="color: #ffc107; font-size: 0.8rem;">
+                                {% for i in "12345"|make_list %}
+                                    <i class="fa-solid fa-star{% if forloop.counter > review.rating %}-o{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-style: italic; color: #555;">"{{ review.comment }}"</p>
+                    <div style="margin-top: 15px; font-size: 0.8rem; color: #999;">{{ review.created_at|date:"d M Y" }}</div>
+                </div>
+                {% endfor %}
+                
+                <!-- Duplicate for seamless loop -->
+                {% for review in reviews %}
+                <div style="min-width: 350px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: var(--shadow);">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: #eee;">
+                            {% if review.user_image %}
+                                <img src="{{ review.user_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <i class="fa-solid fa-user" style="font-size: 2rem; color: #ccc; margin: 15px;"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 style="margin: 0;">{{ review.user_name }}</h4>
+                            <div style="color: #ffc107; font-size: 0.8rem;">
+                                {% for i in "12345"|make_list %}
+                                    <i class="fa-solid fa-star{% if forloop.counter > review.rating %}-o{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-style: italic; color: #555;">"{{ review.comment }}"</p>
+                    <div style="margin-top: 15px; font-size: 0.8rem; color: #999;">{{ review.created_at|date:"d M Y" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact & Map Section -->
+<section class="section container" id="contact">
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 50px;">
+        <div class="contact-info">
+            <h2 style="margin-bottom: 30px;">İletişime Geçin</h2>
+            <div style="margin-bottom: 25px;">
+                <h4 style="color: var(--primary); margin-bottom: 5px;">Adres</h4>
+                <p>{{ hotel.address }}</p>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <h4 style="color: var(--primary); margin-bottom: 5px;">Telefon</h4>
+                <p>{{ hotel.phone }}</p>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <h4 style="color: var(--primary); margin-bottom: 5px;">E-posta</h4>
+                <p>{{ hotel.email }}</p>
+            </div>
+            <div style="margin-top: 40px;">
+                <a href="https://wa.me/{{ hotel.whatsapp }}" class="btn btn-primary" style="background: #25d366; width: 100%; text-align: center; border: none;">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp'tan Rezervasyon
+                </a>
+            </div>
+        </div>
+        <div class="map-container" style="border-radius: 30px; overflow: hidden; height: 450px; box-shadow: var(--shadow);">
+            <!-- Generic Trabzon Map Iframe -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48256.04655459345!2d39.678950550000005!3d41.0026969!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40643b469e71167b%3A0xc3f6087595cf9070!2sTrabzon!5e0!3m2!1str!2str!4v1683800000000!5m2!1str!2str" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,545 @@
+:root {
+    --primary: #0077b6; /* Ocean Blue */
+    --primary-dark: #005f73; /* Deep Sea Blue */
+    --primary-light: #caf0f8; /* Sky/Water Blue */
+    --secondary: #023e8a; /* Navy Blue */
+    --text: #1b263b;
+    --text-light: #415a77;
+    --bg: #f8fbff;
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --shadow: 0 10px 40px rgba(0, 119, 182, 0.1);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 20px 0;
+    background: transparent;
+    transition: var(--transition);
+}
+
+.navbar.scrolled {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    padding: 15px 0;
+    box-shadow: var(--shadow);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white); /* White by default */
+    letter-spacing: 2px;
+    transition: var(--transition);
+}
+
+.navbar.scrolled .logo-text {
+    color: var(--secondary); /* Change to Navy on scroll */
+}
+
+.logo-sub {
+    font-size: 0.7rem;
+    color: var(--primary-light);
+    font-weight: 600;
+    letter-spacing: 4px;
+    margin-top: -5px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--white); /* White by default */
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.navbar.scrolled .nav-links a {
+    color: var(--secondary); /* Change to Navy on scroll */
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--primary-light);
+}
+
+.navbar.scrolled .nav-links a:hover {
+    color: var(--primary);
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.navbar.scrolled .menu-toggle {
+    color: var(--secondary);
+}
+
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block;
+    }
+}
+
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 5px 15px rgba(0, 119, 182, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--secondary);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(2, 62, 138, 0.4);
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    text-align: center;
+    overflow: hidden; /* Ensure video doesn't overflow */
+    background-color: #000; /* Fallback color */
+}
+
+#hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(2, 62, 138, 0.4), rgba(0, 0, 0, 0.2));
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    animation: fadeInUp 1s ease;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 35px;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease 0.2s backwards;
+}
+
+.search-box {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    gap: 20px;
+    box-shadow: 0 20px 50px rgba(0, 119, 182, 0.15);
+    animation: fadeInUp 1s ease 0.4s backwards;
+    border: 1px solid var(--primary-light);
+}
+
+.search-group {
+    flex: 1;
+    text-align: right;
+}
+
+.search-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.search-group input, .search-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: inherit;
+    background: var(--white);
+}
+
+/* Hotels Section */
+.section {
+    padding: 100px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    color: var(--secondary);
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    color: var(--text-light);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hotel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.hotel-card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.hotel-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.hotel-img {
+    height: 250px;
+    position: relative;
+}
+
+.hotel-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hotel-rating {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--secondary);
+    color: var(--white);
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.hotel-body {
+    padding: 25px;
+}
+
+.hotel-body h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: var(--secondary);
+}
+
+.hotel-location {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 15px;
+}
+
+.hotel-amenities {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.hotel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+.price span {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-light);
+}
+
+/* Footer */
+.footer {
+    background: var(--secondary);
+    color: var(--white);
+    padding: 80px 0 30px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr;
+    gap: 60px;
+    margin-bottom: 60px;
+}
+
+.footer h3, .footer h4 {
+    margin-bottom: 25px;
+}
+
+.footer h3 {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.footer p {
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #ccc;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+    padding-right: 5px;
+}
+
+.footer-contact p {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-contact i {
+    color: var(--primary);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--white);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.social-links a:hover {
+    background: var(--primary);
+    transform: rotate(360deg);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.9rem;
+    color: #888;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* Hero Content Adjustments */
+.hero h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+}
+
+/* Section Header Adjustments */
+.section-header h2 {
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.section-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--primary);
+}
+
+/* About Grid */
+.about-grid {
+    margin-top: 40px;
+}
+
+/* Gallery Grid Adjustments */
+#gallery img:hover {
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Contact Info Styling */
+.contact-info h4 {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .about-grid, .footer-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    .search-box {
+        flex-direction: column;
+    }
+}
+
+/* Infinite Scroll Testimonials */
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-350px * 4 - 30px * 4)); }
+}
+
+.testimonial-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 30px;
+    width: max-content;
+    animation: scroll 30s linear infinite;
+}
+
+/* Filter Bar Styles */
+.filter-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.filter-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.filter-btn:hover {
+    background: #f0f4f8;
+    color: var(--primary);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+}
+
